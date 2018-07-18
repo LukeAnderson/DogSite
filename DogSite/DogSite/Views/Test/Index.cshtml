@@ -1,0 +1,25 @@
+﻿@model DogSite.Models.ArticleViewModel
+@{
+    ViewBag.Title = "Index";
+}
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<h2>Index</h2>
+
+<table class="table table-striped">
+    <tr>
+        <th>Title</th>
+        <th>Body</th>
+        <th>Attribution</th>
+    </tr>
+    <tbody>
+        @if(Model != null)
+        {
+            <tr>
+                <td>@Model.Title</td>
+                <td>@Model.Body</td>
+                <td>@Model.Attribution</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
