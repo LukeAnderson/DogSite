@@ -1,9 +1,10 @@
-﻿@model DogSite.Models.ArticleViewModel
+﻿@model PagedList.IPagedList<DogSite.Models.ArticleViewModel>
+@using PagedList.Mvc
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Dog Articles";
 }
 <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
-<h2>Index</h2>
+<h2>@ViewBag.Title</h2>
 
 <table class="table table-striped">
     <tr>
@@ -14,12 +15,16 @@
     <tbody>
         @if(Model != null)
         {
+            foreach (var item in Model)
+            {
             <tr>
-                <td>@Model.Title</td>
-                <td>@Model.Body</td>
-                <td>@Model.Attribution</td>
+                <td>@item.Title</td>
+                <td style="white-space:pre-line">@item.Body</td>
+                <td>@item.Attribution</td>
             </tr>
+            }
         }
     </tbody>
-
 </table>
+@Html.PagedListPager(Model,page => Url.Action("Index", new { page,pageSize = Model.PageSize}))
+Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItemCount Articles

@@ -4,25 +4,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using PagedList;
 namespace DogSite.Controllers
 {
     public class TestController : Controller
     {
         // GET: Test
-        public ActionResult Index()
+        public ActionResult Index(int page =1, int pageSize = 4)
         {
             ArticleDatabaseEntities db = new ArticleDatabaseEntities();
-            Article article = db.Articles.SingleOrDefault(x => x.Id ==1);
+            List<Article> articleList = db.Articles.ToList();
+
+            List<ArticleViewModel> articleViewModelList = new List<ArticleViewModel>();
+            articleViewModelList = articleList.Select(x => new ArticleViewModel { Title = x.Title, Body = x.Body, Attribution = x.Attribution }).ToList();
+
+            PagedList<ArticleViewModel> model = new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize);
+
+            return View(model);
+        }
 
 
-            ArticleViewModel articleVM = new ArticleViewModel();
-            articleVM.Title = article.Title;
-            articleVM.Body = article.Body;
-            articleVM.Attribution = article.Attribution;
+        public ActionResult ArticleDetail(int articleID)
+        {
+            ArticleDatabaseEntities db = new ArticleDatabaseEntities();
+            List<Article> articleList = db.Articles.ToList();
 
 
-            return View(articleVM);
         }
     }
 }
