@@ -9,27 +9,47 @@ namespace DogSite.Controllers
 {
     public class TestController : Controller
     {
-        // GET: Test
-        public ActionResult Index(int page =1, int pageSize = 4)
+
+        private ArticleDatabaseEntities db;
+        private List<Article> articleList;
+        List<ArticleViewModel> articleViewModelList;
+        ArticleViewModel current_article;
+        public TestController()
         {
-            ArticleDatabaseEntities db = new ArticleDatabaseEntities();
-            List<Article> articleList = db.Articles.ToList();
+            db = new ArticleDatabaseEntities();
+            articleList = db.Articles.ToList();
+            articleViewModelList = articleList.Select(x => GetArticleViewModel(x)).ToList();
+            current_article = articleViewModelList[0];
+        }
 
-            List<ArticleViewModel> articleViewModelList = new List<ArticleViewModel>();
-            articleViewModelList = articleList.Select(x => new ArticleViewModel { Title = x.Title, Body = x.Body, Attribution = x.Attribution }).ToList();
-
+        // GET: Test
+        public ActionResult Index(int page =1, int pageSize = 10)
+        {     
             PagedList<ArticleViewModel> model = new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize);
-
             return View(model);
         }
 
 
-        public ActionResult ArticleDetail(int articleID)
+        public ActionResult ArticleDetail(int articleId = 1)
         {
-            ArticleDatabaseEntities db = new ArticleDatabaseEntities();
-            List<Article> articleList = db.Articles.ToList();
-
-
+            current_article = articleViewModelList.SingleOrDefault(x => x.Id == articleId);
+            return View(current_article);
         }
+
+        public ArticleViewModel GetArticleViewModel(Article article)
+        { 
+            return new ArticleViewModel { Id = article.Id, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
+        }
+
+
+
+        public PartialViewResult GetPartialView()
+        {
+            return PartialView("_Article");
+        }
+
+
+
+
     }
 }

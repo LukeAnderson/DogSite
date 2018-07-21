@@ -3,25 +3,19 @@
 @{
     ViewBag.Title = "Dog Articles";
 }
-<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
 <h2>@ViewBag.Title</h2>
 
 <table class="table table-striped">
-    <tr>
-        <th>Title</th>
-        <th>Body</th>
-        <th>Attribution</th>
-    </tr>
+    <thead>
+        <tr><th>Title</th></tr>
+    </thead>
     <tbody>
         @if(Model != null)
         {
             foreach (var item in Model)
             {
-            <tr>
-                <td>@item.Title</td>
-                <td style="white-space:pre-line">@item.Body</td>
-                <td>@item.Attribution</td>
-            </tr>
+                <tr><td><a href="/Test/ArticleDetail?articleId=@item.Id">@item.Title</a></td></tr>
             }
         }
     </tbody>

@@ -26,5 +26,7 @@ namespace DogSite.Models
         }
     
         public virtual DbSet<Article> Articles { get; set; }
+
+        public System.Data.Entity.DbSet<DogSite.Models.ArticleViewModel> ArticleViewModels { get; set; }
     }
 }
