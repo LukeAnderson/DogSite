@@ -1,35 +1,29 @@
 ﻿@model DogSite.Models.ArticleViewModel
 
-<div>
-    <h4>ArticleViewModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Body)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Body)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Attribution)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Attribution)
-        </dd>
-
-    </dl>
+<div class="jumbotron">
+    @if (Model != null)
+    {
+        <h1 id="title">@Model.Title</h1>
+        <p id="body" class="preline">@Model.Body</p>
+        <p class="lead">@Model.Attribution</p>
+    }
 </div>
-<p>
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+<input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" onclick="GetNextArticle()" />
+
+<script>
+    function GetNextArticle() {
+        if (document.readyState === 'interactive' | document.readyState === 'complete') {
+
+            $.ajax({
+                url: '@Url.Action("GetArticle", "Test",new { Id = Model.Id+1 })',
+                method: 'GET',
+                success: function (data) {
+
+                    $("#partial").html(data)
+                }
+            });
+        }
+    }
+</script>

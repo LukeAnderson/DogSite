@@ -13,13 +13,11 @@ namespace DogSite.Controllers
         private ArticleDatabaseEntities db;
         private List<Article> articleList;
         List<ArticleViewModel> articleViewModelList;
-        ArticleViewModel current_article;
         public TestController()
         {
             db = new ArticleDatabaseEntities();
             articleList = db.Articles.ToList();
             articleViewModelList = articleList.Select(x => GetArticleViewModel(x)).ToList();
-            current_article = articleViewModelList[0];
         }
 
         // GET: Test
@@ -30,25 +28,39 @@ namespace DogSite.Controllers
         }
 
 
+
+        //index of articles a title is clicked.
         public ActionResult ArticleDetail(int articleId = 1)
         {
-            current_article = articleViewModelList.SingleOrDefault(x => x.Id == articleId);
-            return View(current_article);
+            return View(articleViewModelList.SingleOrDefault(x => x.Id == articleId));
         }
+
+        //partial view for ArticleDetail page
+        public PartialViewResult GetPartialView(int Id)
+        {
+
+            if ( Id+1 < articleViewModelList.Count())
+            {
+                return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == Id + 1));
+            }
+
+            return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == 1));
+        }
+
+
+
+
+        public PartialViewResult GetArticle(int Id)
+        {
+
+            return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == Id));
+        }
+
 
         public ArticleViewModel GetArticleViewModel(Article article)
-        { 
+        {
             return new ArticleViewModel { Id = article.Id, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
         }
-
-
-
-        public PartialViewResult GetPartialView()
-        {
-            return PartialView("_Article");
-        }
-
-
 
 
     }

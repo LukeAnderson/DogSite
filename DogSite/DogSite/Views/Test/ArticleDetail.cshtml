@@ -1,38 +1,25 @@
 ﻿@model DogSite.Models.ArticleViewModel
-@{
-    ViewBag.title = "Article Detail";
-}
-<div class="jumbotron">
-    @if (Model != null)
-    {
-        <h1 id="title">@Model.Title</h1>
-        <p id="body" class="preline">@Model.Body</p>
-        <p class="lead">@Model.Attribution</p>
 
-        <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" onclick="AjaxDisplayString()" />
-       <!-- <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" />
-            -->
-    }
-</div>
+<!--<div id="partial"></div>-->
 
 <div id="partial"></div>
 
+
+
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+
 <script>
-
-    function AjaxDisplayString()
-{
-   $.ajax({
-        url: '@Url.Action("GetPartialView")',
-        method: 'GET',
-       success: function (data) {
-           $("#partial").html(data)
-       }
-   });
-}
-
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
+            method: 'GET',
+            success: function (data) {
+                $("#partial").html(data)
+            }
+        });
+    });
 </script>
-
-
-
-
-
