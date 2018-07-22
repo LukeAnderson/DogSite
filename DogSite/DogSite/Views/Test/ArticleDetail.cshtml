@@ -1,15 +1,19 @@
 ﻿@model DogSite.Models.ArticleViewModel
 
-<!--<div id="partial"></div>-->
-
-<div id="partial"></div>
-
-
+<div id="currentArticle"><!--PartialViewDiv--></div>
 
 
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+@section left{
+    <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
+}
+
+@section right{
+    <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
+}
 
 
 <script>
@@ -18,7 +22,7 @@
             url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
             method: 'GET',
             success: function (data) {
-                $("#partial").html(data)
+                $("#currentArticle").html(data)
             }
         });
     });

@@ -52,7 +52,10 @@ namespace DogSite.Controllers
 
         public PartialViewResult GetArticle(int Id)
         {
-
+            if (Id > articleViewModelList.Count)//get the first article
+                Id = 1;
+            if (Id < 1)//get the last article
+                Id = articleViewModelList.Count;
             return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == Id));
         }
 

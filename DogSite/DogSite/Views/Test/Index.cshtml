@@ -11,7 +11,7 @@
         <tr><th>Title</th></tr>
     </thead>
     <tbody>
-        @if(Model != null)
+        @if (Model != null)
         {
             foreach (var item in Model)
             {
@@ -20,5 +20,11 @@
         }
     </tbody>
 </table>
-@Html.PagedListPager(Model,page => Url.Action("Index", new { page,pageSize = Model.PageSize}))
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = Model.PageSize }))
 Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItemCount Articles
+
+@section footer{
+    <p class="lead">
+        This is footer section.
+    </p>
+    }
