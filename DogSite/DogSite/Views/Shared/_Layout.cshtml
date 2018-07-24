@@ -9,6 +9,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/angular")
     @RenderSection("scripts", required: false)
 </head>
 <body>
@@ -61,8 +62,10 @@
 
 
         <footer>
-            @RenderSection("footer", false)
-            <p>&copy; 2018 - My ASP.NET Application</p>
+            <div class="container">
+                @RenderSection("footer", false)
+                <p>&copy; 2018 - My ASP.NET Application</p>
+            </div>
         </footer>
     </div>
 

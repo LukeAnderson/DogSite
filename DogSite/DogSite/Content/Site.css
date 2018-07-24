@@ -20,7 +20,7 @@
 input,
 select,
 textarea {
-    max-width: 280px;
+    max-width: 350px;
 }
 
 /*keeps new lines*/
@@ -31,4 +31,11 @@ textarea {
 .left-section-images {
     max-width: 100%;
     height:auto;
+    align-content:center;
 }
+
+
+/*
+    style-tags
+    style="overflow-wrap:break-word" in articleDetail.cshtml couldn't make it work as a class for some reason
+*/

@@ -20,7 +20,6 @@ namespace DogSite.Controllers
             articleViewModelList = articleList.Select(x => GetArticleViewModel(x)).ToList();
         }
 
-        // GET: Test
         public ActionResult Index(int page =1, int pageSize = 10)
         {     
             PagedList<ArticleViewModel> model = new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize);
@@ -65,6 +64,10 @@ namespace DogSite.Controllers
             return new ArticleViewModel { Id = article.Id, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
         }
 
+        public string GetComments()
+        {
+            return "got the comments";
+        }
 
     }
 }

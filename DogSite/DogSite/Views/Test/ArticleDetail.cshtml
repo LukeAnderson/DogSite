@@ -1,14 +1,26 @@
 ﻿@model DogSite.Models.ArticleViewModel
 
-<div id="currentArticle"><!--PartialViewDiv--></div>
 
-
-<p>
-    @Html.ActionLink("Back to List", "Index")
-</p>
 
 @section left{
     <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
+}
+
+@section middle{
+    <div id="currentArticle"><!--PartialViewDiv--></div>
+    <p>
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+
+    <div ng-app="CommentApp" ng-controller="CommentController">
+        <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
+
+        <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
+     
+        <div style="overflow-wrap:break-word" ng-model="commentSection">
+            <p class="preline" ng-model="comments">{{comments}}</p>
+        </div>
+    </div>
 }
 
 @section right{
@@ -16,8 +28,12 @@
 }
 
 
+
 <script>
+
     $(document).ready(function () {
+
+
         $.ajax({
             url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
             method: 'GET',
@@ -26,4 +42,44 @@
             }
         });
     });
+
+
+    var app = angular.module('CommentApp', []);
+    app.controller('CommentController', function ($scope) {
+
+        //initialize
+        var postCommentPlaceHolderText = "Comment!"
+        $scope.postComment = postCommentPlaceHolderText
+
+
+
+        var init = function () {
+            $.ajax({
+                url: '@Url.Action("GetComments","Test")',
+                method: 'GET',
+                success: function (data) {
+                    $scope.comments = data
+                }
+            });
+        }
+        init();
+
+
+
+
+        //comment functions
+        $scope.clearPlaceHolderText = function () {
+            if ($scope.postComment === postCommentPlaceHolderText)
+                $scope.postComment = "All clear!"
+        }
+
+        $scope.addComment = function () {
+            $scope.comments += "\n\n\n" + $scope.postComment
+        }
+    });
+
+
+
+
+
 </script>
