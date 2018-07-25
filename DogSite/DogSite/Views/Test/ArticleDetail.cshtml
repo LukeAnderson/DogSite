@@ -8,17 +8,21 @@
 
 @section middle{
     <div id="currentArticle"><!--PartialView _Article--></div>
-    <p>
-        @Html.ActionLink("Back to List", "Index")
-    </p>
 
     <div ng-app="CommentApp" ng-controller="CommentController">
+
+        <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" onclick="GetPreviousArticle()" ng-click="decrement()" />
+        <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" onclick="GetNextArticle()" ng-click="increment()" />
+        {{count}}
+
+        <p>@Html.ActionLink("Back to List", "Index")</p>
+
         <p ng-model="label">{{label}}</p>
         <hr />
         <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
 
         <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
-     
+
         <div style="overflow-wrap:break-word" ng-model="commentSection">
             <p class="preline" ng-model="comments">{{comments}}</p>
         </div>
@@ -50,14 +54,41 @@
     app.controller('CommentController', function ($scope) {
 
         //initialize
-        var postCommentPlaceHolderText = "Comment!"
-        $scope.postComment = postCommentPlaceHolderText
+        var postCommentPlaceHolderText = "Comment!";
+        $scope.postComment = postCommentPlaceHolderText;
 
+        $scope.count = @Model.Id;
+
+        var maxCount;
+        $.ajax({
+            url: '@Url.Action("GetMaxCount","Test",new { Id = Model.Id})',
+            method: 'GET',
+            success: function (data) {
+                maxCount = data;
+            }
+        });
 
         //comment functions
         $scope.clearPlaceHolderText = function () {
             if ($scope.postComment === postCommentPlaceHolderText)
                 $scope.postComment = "All clear!"
+        }
+
+
+        $scope.increment = function () {
+            if ($scope.count >= maxCount)
+                $scope.count = 1;
+            else 
+                $scope.count++;
+            $scope.getComments();
+        }
+
+        $scope.decrement = function () {
+            if ($scope.count <= 1)
+                $scope.count = maxCount;
+            else
+                $scope.count--;
+            $scope.getComments();
         }
 
 
@@ -81,14 +112,14 @@
         //init function
         $scope.getComments = function () {
             $.ajax({
-                url: '@Url.Action("GetComments","Test")?articleId=1',
+                url: '@Url.Action("GetComments","Test")?articleId=' + $scope.count,
                 method: 'GET',
                 success: function (data) {
                     $scope.comments = data
+                    $scope.$apply();//call to show the comments.
                 }
             });
         };
-        //have to call this twice to see changes in view possibly
         $scope.getComments();
     });
 </script>

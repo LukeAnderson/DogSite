@@ -29,7 +29,7 @@ namespace DogSite.Controllers
 
         public ArticleViewModel MakeArticleViewModel(Article article)
         {
-            return new ArticleViewModel { Id = article.articleId, Title = article.title, Body = article.body, Attribution = article.attribution };
+            return new ArticleViewModel { Id = article.ArticleId, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
         }
 
 
@@ -67,12 +67,11 @@ namespace DogSite.Controllers
 
         public string GetComments(int articleId)
         {
-            List<Comment> commentList = db.Comments.ToList();
-
+            List<Comment> commentList = db.Comments.Where(x => x.ArticleId == articleId).ToList();
             string commentText = "";
             foreach (Comment c in commentList)
             {
-                commentText += c.text + "\n\n\n";
+                commentText += c.Text + "\n\n\n";
             }
             return commentText;
         }
@@ -84,6 +83,11 @@ namespace DogSite.Controllers
         {
 
             return "added comment: " + comment;
+        }
+
+        public int GetMaxCount()
+        {
+            return articleViewModelList.Count;
         }
     }
 }
