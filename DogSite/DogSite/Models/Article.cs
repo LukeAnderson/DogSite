@@ -14,9 +14,18 @@ namespace DogSite.Models
     
     public partial class Article
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
-        public string Attribution { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Article()
+        {
+            this.Comments = new HashSet<Comment>();
+        }
+    
+        public int articleId { get; set; }
+        public string title { get; set; }
+        public string body { get; set; }
+        public string attribution { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

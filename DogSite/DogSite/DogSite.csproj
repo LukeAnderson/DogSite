@@ -186,6 +186,9 @@
       <DependentUpon>ArticleModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\ArticleViewModel.cs" />
+    <Compile Include="Models\Comment.cs">
+      <DependentUpon>ArticleModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -205,8 +208,8 @@
     <Content Include="Content\Site.css" />
     <Content Include="Models\ArticleModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ArticleModel.Context.cs</LastGenOutput>
       <DependentUpon>ArticleModel.edmx</DependentUpon>
+      <LastGenOutput>ArticleModel.Context.cs</LastGenOutput>
     </Content>
     <Content Include="Models\ArticleModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -221,6 +224,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Scripts\angular.min.js.map" />
     <EntityDeploy Include="Models\ArticleModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ArticleModel.Designer.cs</LastGenOutput>
@@ -228,7 +232,6 @@
     <Content Include="Models\ArticleModel.edmx.diagram">
       <DependentUpon>ArticleModel.edmx</DependentUpon>
     </Content>
-    <Content Include="Scripts\angular.min.js.map" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

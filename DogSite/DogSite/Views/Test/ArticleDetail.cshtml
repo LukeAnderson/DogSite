@@ -7,12 +7,14 @@
 }
 
 @section middle{
-    <div id="currentArticle"><!--PartialViewDiv--></div>
+    <div id="currentArticle"><!--PartialView _Article--></div>
     <p>
         @Html.ActionLink("Back to List", "Index")
     </p>
 
     <div ng-app="CommentApp" ng-controller="CommentController">
+        <p ng-model="label">{{label}}</p>
+        <hr />
         <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
 
         <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
@@ -33,7 +35,6 @@
 
     $(document).ready(function () {
 
-
         $.ajax({
             url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
             method: 'GET',
@@ -44,6 +45,7 @@
     });
 
 
+    //Angular commment app
     var app = angular.module('CommentApp', []);
     app.controller('CommentController', function ($scope) {
 
@@ -52,34 +54,41 @@
         $scope.postComment = postCommentPlaceHolderText
 
 
-
-        var init = function () {
-            $.ajax({
-                url: '@Url.Action("GetComments","Test")',
-                method: 'GET',
-                success: function (data) {
-                    $scope.comments = data
-                }
-            });
-        }
-        init();
-
-
-
-
         //comment functions
         $scope.clearPlaceHolderText = function () {
             if ($scope.postComment === postCommentPlaceHolderText)
                 $scope.postComment = "All clear!"
         }
 
+
+
+        //add comment
         $scope.addComment = function () {
             $scope.comments += "\n\n\n" + $scope.postComment
+
+
+  
+            $.ajax({
+                url:'@Url.Action("AddComment", "Test")?comment=' + $scope.postComment,
+                method: 'POST',
+                success: function (data) {
+                    $scope.label = data
+                }
+            });
         }
+
+
+        //init function
+        $scope.getComments = function () {
+            $.ajax({
+                url: '@Url.Action("GetComments","Test")?articleId=1',
+                method: 'GET',
+                success: function (data) {
+                    $scope.comments = data
+                }
+            });
+        };
+        //have to call this twice to see changes in view possibly
+        $scope.getComments();
     });
-
-
-
-
-
 </script>

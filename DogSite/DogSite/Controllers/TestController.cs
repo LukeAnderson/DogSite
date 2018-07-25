@@ -11,20 +11,27 @@ namespace DogSite.Controllers
     {
 
         private ArticleDatabaseEntities db;
-        private List<Article> articleList;
         List<ArticleViewModel> articleViewModelList;
         public TestController()
         {
             db = new ArticleDatabaseEntities();
-            articleList = db.Articles.ToList();
-            articleViewModelList = articleList.Select(x => GetArticleViewModel(x)).ToList();
+            articleViewModelList = db.Articles.ToList().Select(x => MakeArticleViewModel(x)).ToList();
         }
 
         public ActionResult Index(int page =1, int pageSize = 10)
         {     
+
             PagedList<ArticleViewModel> model = new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize);
             return View(model);
         }
+
+
+
+        public ArticleViewModel MakeArticleViewModel(Article article)
+        {
+            return new ArticleViewModel { Id = article.articleId, Title = article.title, Body = article.body, Attribution = article.attribution };
+        }
+
 
 
 
@@ -47,8 +54,6 @@ namespace DogSite.Controllers
         }
 
 
-
-
         public PartialViewResult GetArticle(int Id)
         {
             if (Id > articleViewModelList.Count)//get the first article
@@ -59,15 +64,26 @@ namespace DogSite.Controllers
         }
 
 
-        public ArticleViewModel GetArticleViewModel(Article article)
+
+        public string GetComments(int articleId)
         {
-            return new ArticleViewModel { Id = article.Id, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
+            List<Comment> commentList = db.Comments.ToList();
+
+            string commentText = "";
+            foreach (Comment c in commentList)
+            {
+                commentText += c.text + "\n\n\n";
+            }
+            return commentText;
         }
 
-        public string GetComments()
-        {
-            return "got the comments";
-        }
+   
 
+
+        public string AddComment(string comment)
+        {
+
+            return "added comment: " + comment;
+        }
     }
 }

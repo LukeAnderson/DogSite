@@ -4,10 +4,19 @@
     <EntitySetMapping Name="Articles">
       <EntityTypeMapping TypeName="ArticleDatabaseModel.Article">
         <MappingFragment StoreEntitySet="Article">
-          <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Title" ColumnName="Title" />
-          <ScalarProperty Name="Body" ColumnName="Body" />
-          <ScalarProperty Name="Attribution" ColumnName="Attribution" />
+          <ScalarProperty Name="articleId" ColumnName="articleId" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="body" ColumnName="body" />
+          <ScalarProperty Name="attribution" ColumnName="attribution" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Comments">
+      <EntityTypeMapping TypeName="ArticleDatabaseModel.Comment">
+        <MappingFragment StoreEntitySet="Comment">
+          <ScalarProperty Name="commentId" ColumnName="commentId" />
+          <ScalarProperty Name="text" ColumnName="text" />
+          <ScalarProperty Name="articleId" ColumnName="articleId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
