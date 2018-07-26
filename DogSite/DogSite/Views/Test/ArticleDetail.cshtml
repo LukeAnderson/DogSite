@@ -96,14 +96,12 @@
         //add comment
         $scope.addComment = function () {
             $scope.comments += "\n\n\n" + $scope.postComment
-
-
-  
             $.ajax({
-                url:'@Url.Action("AddComment", "Test")?comment=' + $scope.postComment,
+                url: '@Url.Action("AddComment", "Test")?comment=' + $scope.postComment + "&articleId=" + $scope.count,
                 method: 'POST',
                 success: function (data) {
-                    $scope.label = data
+                    $scope.label = data;
+                    $scope.$apply();
                 }
             });
         }

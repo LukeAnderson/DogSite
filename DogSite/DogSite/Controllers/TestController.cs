@@ -79,10 +79,10 @@ namespace DogSite.Controllers
    
 
 
-        public string AddComment(string comment)
+        public string AddComment(string comment, int articleId)
         {
 
-            return "added comment: " + comment;
+            return "added comment: " + comment + " to article: " + articleId;
         }
 
         public int GetMaxCount()

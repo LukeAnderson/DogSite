@@ -1,0 +1,52 @@
+﻿@model DogSite.Models.User
+
+@{
+}
+
+<h1>this is the login page</h1>
+
+@using (Html.BeginForm("Authorize","Login",FormMethod.Post))
+{
+<table>
+    <tr>
+        <td></td>
+        <td>App Name</td>
+    </tr>
+
+    <!--Username-->
+    <tr>
+        <td>@Html.LabelFor(model => model.Username)</td>
+        <td>@Html.EditorFor(model => model.Username)</td>
+        <td>@Html.ValidationMessageFor(model => model.Username)</td>
+    </tr>
+    
+    <!--Password-->
+    <tr>
+        <td>@Html.LabelFor(model => model.Password)</td>
+        <td>@Html.EditorFor(model => model.Password)</td>
+        <td>@Html.ValidationMessageFor(model => model.Password)</td>
+    </tr>
+
+    <!--Error message-->
+    <tr>
+        <td colspan="2">
+            <label>@Html.DisplayFor(model => model.LoginErrorMessage)</label>
+        </td>
+    </tr>
+
+
+    <!--form buttons-->
+    <tr>
+        <td></td>
+        <td>
+            <input type="submit" value="Login" />
+            <input type="reset" value="Clear" />
+        </td>
+
+    </tr>
+
+
+</table>
+
+
+}

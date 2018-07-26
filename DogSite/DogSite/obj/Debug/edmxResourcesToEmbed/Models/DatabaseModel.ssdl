@@ -17,6 +17,14 @@
     <Property Name="Text" Type="varchar" MaxLength="256" />
     <Property Name="ArticleId" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Username" Type="varchar" MaxLength="50" />
+    <Property Name="password" Type="varchar" MaxLength="100" />
+  </EntityType>
   <Association Name="FK_Comment_ToArticle">
     <End Role="Article" Type="Self.Article" Multiplicity="1" />
     <End Role="Comment" Type="Self.Comment" Multiplicity="*" />
@@ -32,6 +40,7 @@
   <EntityContainer Name="ArticleDatabaseModelStoreContainer">
     <EntitySet Name="Article" EntityType="Self.Article" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Comment" EntityType="Self.Comment" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="FK_Comment_ToArticle" Association="Self.FK_Comment_ToArticle">
       <End Role="Article" EntitySet="Article" />
       <End Role="Comment" EntitySet="Comment" />

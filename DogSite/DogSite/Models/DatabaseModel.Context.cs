@@ -27,5 +27,6 @@ namespace DogSite.Models
     
         public virtual DbSet<Article> Articles { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }
