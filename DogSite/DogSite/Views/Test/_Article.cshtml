@@ -1,6 +1,4 @@
 ﻿@model DogSite.Models.ArticleViewModel
-
-
 <div class="jumbotron">
     @if (Model != null)
     {
@@ -9,27 +7,3 @@
         <p class="lead">@Model.Attribution</p>
     }
 </div>
-
-
-
-<script>
-    function GetPreviousArticle() {
-        $.ajax({
-            url: '@Url.Action("GetArticle", "Test",new { Id = Model.Id - 1 })',
-            method: 'GET',
-            success: function (data) {
-                $("#currentArticle").html(data)
-            }
-        });
-    }
-
-    function GetNextArticle() {
-        $.ajax({
-            url: '@Url.Action("GetArticle", "Test",new { Id = Model.Id+1 })',
-            method: 'GET',
-            success: function (data) {
-                $("#currentArticle").html(data)
-            }
-        });
-    }
-</script>

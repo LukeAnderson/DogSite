@@ -18,41 +18,23 @@ namespace DogSite.Controllers
             articleViewModelList = db.Articles.ToList().Select(x => MakeArticleViewModel(x)).ToList();
         }
 
-        public ActionResult Index(int page =1, int pageSize = 10)
-        {     
-
-            PagedList<ArticleViewModel> model = new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize);
-            return View(model);
-        }
-
-
-
+        //MakeArticleViewModel => (article -> articleViewModel)
         public ArticleViewModel MakeArticleViewModel(Article article)
         {
             return new ArticleViewModel { Id = article.ArticleId, Title = article.Title, Body = article.Body, Attribution = article.Attribution };
         }
 
+        //get PagedList of all the articles.
+        public ActionResult Index(int page =1, int pageSize = 10)
+        {     
+            return View(new PagedList<ArticleViewModel>(articleViewModelList, page, pageSize));
+        }
 
-
-
-        //index of articles a title is clicked.
+        //get a specific article
         public ActionResult ArticleDetail(int articleId = 1)
         {
             return View(articleViewModelList.SingleOrDefault(x => x.Id == articleId));
         }
-
-        //partial view for ArticleDetail page
-        public PartialViewResult GetPartialView(int Id)
-        {
-
-            if ( Id+1 < articleViewModelList.Count())
-            {
-                return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == Id + 1));
-            }
-
-            return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == 1));
-        }
-
 
         public PartialViewResult GetArticle(int Id)
         {
