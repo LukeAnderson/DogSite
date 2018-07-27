@@ -34,7 +34,9 @@ textarea {
     align-content:center;
 }
 
-
+#article.jumbotron {
+    background-color:aliceblue;
+}
 /*
     style-tags
     style="overflow-wrap:break-word" in articleDetail.cshtml couldn't make it work as a class for some reason

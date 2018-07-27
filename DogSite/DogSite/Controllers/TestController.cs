@@ -5,6 +5,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using PagedList;
+using System.Net;
+using System.Diagnostics;
+
 namespace DogSite.Controllers
 {
     public class TestController : Controller
@@ -12,6 +15,7 @@ namespace DogSite.Controllers
 
         private ArticleDatabaseEntities db;
         List<ArticleViewModel> articleViewModelList;
+
         public TestController()
         {
             db = new ArticleDatabaseEntities();
@@ -45,35 +49,66 @@ namespace DogSite.Controllers
             return PartialView("_Article", articleViewModelList.SingleOrDefault(x => x.Id == Id));
         }
 
-
-
         public string GetComments(int articleId)
         {
             List<Comment> commentList = db.Comments.Where(x => x.ArticleId == articleId).ToList();
             string commentText = "";
+            
             foreach (Comment c in commentList)
             {
-                commentText += c.Text + "\n\n\n";
+                commentText += c.User.Username + "\n"
+                             + c.Text + "\n\n\n";
             }
             return commentText;
         }
 
-
-        public string AddComment(string comment, int articleId)
+        public ActionResult GetCommentList(int articleId)
         {
+            return PartialView("_Comments", db.Comments.Where(x => x.ArticleId == articleId).ToList());
+        }
+
+        public CommentViewModel MakeCommentViewModel(Comment comment)
+        {
+            return new CommentViewModel { Text = comment.Text, Username = comment.User.Username };
+        }
+
+
+        public int GetNumberoFComments(int articleId)
+        {
+            return db.Comments.Where(x => x.ArticleId == articleId).ToList().Count;
+        }
+
+        public object[] GetAll()
+        {
+            /* var car = {
+                  maxCount: 0,
+                  model: "500",
+                  color: "white"
+               };
+            */
+            object[] all = { 0,"69","magenta"};
+            return all;
+        }
+
+
+
+
+
+        public HttpStatusCode AddComment(string comment, int articleId)
+        {
+            if (Session["userId"] == null)
+                return HttpStatusCode.Unauthorized;
+
+            //make comment
             Comment newcomment = new Comment();
             newcomment.ArticleId = articleId;
+            newcomment.UserId = (int)Session["userId"];
             newcomment.Text = comment;
-
+            
             db.Comments.Add(newcomment);
             db.SaveChanges();
 
-
-
-            var username = "anonymous";
-            if (Session["userID"] != null)
-                username = getUser((int)Session["userId"]).Username;
-            return username + " added comment: " + comment + " to article: " + articleId;
+            return HttpStatusCode.OK;
         }
 
         public int GetMaxCount()
@@ -86,6 +121,8 @@ namespace DogSite.Controllers
         {
             return db.Users.SingleOrDefault(x => x.UserId == userId);
         }
+
+
 
     }
 }

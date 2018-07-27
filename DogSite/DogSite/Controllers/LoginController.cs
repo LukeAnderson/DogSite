@@ -1,8 +1,5 @@
 ﻿using DogSite.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace DogSite.Controllers
@@ -17,7 +14,7 @@ namespace DogSite.Controllers
         }
 
         [HttpPost]
-        public ActionResult Authorize(User userModel)
+        public ActionResult Authorize(UserViewModel userModel)
         {
             db = new ArticleDatabaseEntities();
             var userDetails = db.Users.Where(x => x.Username == userModel.Username && x.Password == userModel.Password).FirstOrDefault();
@@ -29,6 +26,7 @@ namespace DogSite.Controllers
             else
             {
                 Session["userId"] = userDetails.UserId;
+                Session["Username"] = userDetails.Username;
                 return RedirectToAction("Index", "Home");
             }
         }

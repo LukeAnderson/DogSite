@@ -11,21 +11,20 @@ namespace DogSite.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
+    
     public partial class User
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public User()
+        {
+            this.Comments = new HashSet<Comment>();
+        }
+    
         public int UserId { get; set; }
-
-        [Required(ErrorMessage = "Username is required.")]
         public string Username { get; set; }
-
-
-        [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
-
-
-        public string LoginErrorMessage { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

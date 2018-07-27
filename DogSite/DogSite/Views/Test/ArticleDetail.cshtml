@@ -5,7 +5,7 @@
 }
 
 @section middle{
-    <div id="currentArticle"><!--PartialView _Article--></div>
+    <container id="currentArticle"><!--PartialView _Article--></container>
 
     <div ng-app="CommentApp" ng-controller="CommentController">
 
@@ -21,6 +21,9 @@
 
         <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
 
+
+        <div id="partialViewComments"></div>
+
         <div style="overflow-wrap:break-word" ng-model="commentSection">
             <p class="preline" ng-model="comments">{{comments}}</p>
         </div>
@@ -32,9 +35,11 @@
 }
 
 <script>
-    
+
+
 //call on load
 $(document).ready(function () {
+
     $.ajax({
         url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
         method: 'GET',
@@ -63,20 +68,23 @@ app.controller('CommentController', function ($scope) {
         }
     });
 
+
     $scope.clearPlaceHolderText = function () {
         if ($scope.postComment === postCommentPlaceHolderText)
             $scope.postComment = "All clear!"
     }
+
 
     $scope.getArticle = function () {
         $.ajax({
             url: '@Url.Action("GetArticle","Test")?Id=' + $scope.count,
             method: 'GET',
             success: function (data) {
-                $("#currentArticle").html(data)
+                $("#currentArticle").html(data);
             }
         });
     }
+
 
     //get next/previous articles
     $scope.getNextArticleId = function () {
@@ -93,12 +101,16 @@ app.controller('CommentController', function ($scope) {
 
     //add comment to article where articleId === $scope.count
     $scope.addComment = function () {
-        $scope.comments += "\n\n\n" + $scope.postComment
         $.ajax({
             url: '@Url.Action("AddComment", "Test")?comment=' + escape( $scope.postComment )+ "&articleId=" + $scope.count,
             method: 'POST',
             success: function (data) {
-                $scope.label = $scope.postComment;
+                if (data != "OK") {
+                    console.log("ajax call AddComment,Test in ArticleDetail returned: " + data + " HttpStatusCode");
+                    return;
+                }
+                $scope.label = data;//$scope.postComment;
+                $scope.comments += $scope.postComment + "\n\n\n";
                 $scope.$apply();
             }
         });
@@ -111,10 +123,23 @@ app.controller('CommentController', function ($scope) {
             method: 'GET',
             success: function (data) {
                 $scope.comments = data
+                $scope.getCommentList();
                 $scope.$apply();
             }
         });
     };
+
+    $scope.getCommentList = function () {
+        $.ajax({
+            url: '@Url.Action("GetCommentList","Test")?articleId=' + $scope.count,
+            method: 'GET',
+            success: function (data) {
+                $("#partialViewComments").html(data);
+                $scope.$apply();
+            }
+        });
+    };
+
     $scope.getComments();//call to get comments on initial article
 });
 </script>
