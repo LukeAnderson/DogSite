@@ -58,18 +58,34 @@ namespace DogSite.Controllers
             return commentText;
         }
 
-   
-
 
         public string AddComment(string comment, int articleId)
         {
+            Comment newcomment = new Comment();
+            newcomment.ArticleId = articleId;
+            newcomment.Text = comment;
 
-            return "added comment: " + comment + " to article: " + articleId;
+            db.Comments.Add(newcomment);
+            db.SaveChanges();
+
+
+
+            var username = "anonymous";
+            if (Session["userID"] != null)
+                username = getUser((int)Session["userId"]).Username;
+            return username + " added comment: " + comment + " to article: " + articleId;
         }
 
         public int GetMaxCount()
         {
             return articleViewModelList.Count;
         }
+
+
+        public User getUser(int userId)
+        {
+            return db.Users.SingleOrDefault(x => x.UserId == userId);
+        }
+
     }
 }

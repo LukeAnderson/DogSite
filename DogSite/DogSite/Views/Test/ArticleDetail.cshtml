@@ -15,7 +15,7 @@
 
         <p>@Html.ActionLink("Back to List", "Index")</p>
 
-        <p ng-model="label">{{label}}</p>
+        <p class="preline" ng-model="label">{{label}}</p>
         <hr />
         <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
 
@@ -95,10 +95,10 @@ app.controller('CommentController', function ($scope) {
     $scope.addComment = function () {
         $scope.comments += "\n\n\n" + $scope.postComment
         $.ajax({
-            url: '@Url.Action("AddComment", "Test")?comment=' + $scope.postComment + "&articleId=" + $scope.count,
+            url: '@Url.Action("AddComment", "Test")?comment=' + escape( $scope.postComment )+ "&articleId=" + $scope.count,
             method: 'POST',
             success: function (data) {
-                $scope.label = data;
+                $scope.label = $scope.postComment;
                 $scope.$apply();
             }
         });
