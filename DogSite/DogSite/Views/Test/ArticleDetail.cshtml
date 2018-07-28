@@ -9,24 +9,38 @@
 
     <div ng-app="CommentApp" ng-controller="CommentController">
 
-        <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticleId()" />
-        <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticleId()" />
+        <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticle()" />
+        <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticle()" />
         {{count}}
 
         <p>@Html.ActionLink("Back to List", "Index")</p>
 
-        <p class="preline" ng-model="label">{{label}}</p>
+
         <hr />
-        <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
+        <p class="preline" ng-model="label">{{label}}</p>
 
-        <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
+        <div class="panel panel-danger" ng-model="errorPanel" ng-show="errorPanelShow">
+       
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left" style="padding:7.5px;"><strong>{{panelTitle}}</strong></h3>
+                <button type="button" class="close" aria-label="Close" ng-click="hideErrorPanel()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="panel-body">
+                {{panelBody}}
+            </div>
+        </div>
+        <br />
 
+
+        <div>
+            <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
+            <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
+        </div>
 
         <div id="partialViewComments"></div>
 
-        <div style="overflow-wrap:break-word" ng-model="commentSection">
-            <p class="preline" ng-model="comments">{{comments}}</p>
-        </div>
     </div>
 }
 
@@ -68,12 +82,10 @@ app.controller('CommentController', function ($scope) {
         }
     });
 
-
     $scope.clearPlaceHolderText = function () {
         if ($scope.postComment === postCommentPlaceHolderText)
             $scope.postComment = "All clear!"
     }
-
 
     $scope.getArticle = function () {
         $.ajax({
@@ -85,19 +97,25 @@ app.controller('CommentController', function ($scope) {
         });
     }
 
-
     //get next/previous articles
-    $scope.getNextArticleId = function () {
+    $scope.getNextArticle = function () {
         $scope.count = $scope.count >= maxCount ? 1 : ++$scope.count;
         $scope.getArticle();
         $scope.getComments();
     }
 
-    $scope.getPreviousArticleId = function () {
+    $scope.getPreviousArticle = function () {
         $scope.count = $scope.count <= 1 ? maxCount : --$scope.count;
         $scope.getArticle();
         $scope.getComments();
     }
+
+    $scope.errorPanelShow= true;
+    $scope.hideErrorPanel = function () {
+        $scope.errorPanelShow = false;
+    }
+
+
 
     //add comment to article where articleId === $scope.count
     $scope.addComment = function () {
@@ -105,31 +123,32 @@ app.controller('CommentController', function ($scope) {
             url: '@Url.Action("AddComment", "Test")?comment=' + escape( $scope.postComment )+ "&articleId=" + $scope.count,
             method: 'POST',
             success: function (data) {
-                if (data != "OK") {
+                if (data === "Unauthorized") {
+                    $scope.label = "you need to log in";
+                    $scope.errorPanelShow = true;
+                    $scope.panelTitle = "cool";
+                    $scope.panelBody = "You need to log in";
+                    $scope.$apply();
+                    return;
+                }
+                else if (data != "OK") {
+                    $scope.label = "unexpected server error contact site admin";
+                    $scope.$apply();
                     console.log("ajax call AddComment,Test in ArticleDetail returned: " + data + " HttpStatusCode");
                     return;
                 }
-                $scope.label = data;//$scope.postComment;
-                $scope.comments += $scope.postComment + "\n\n\n";
-                $scope.$apply();
+                else {//OK
+                    $scope.label = data;//$scope.postComment;
+                    $scope.comments += $scope.postComment + "\n\n\n";
+                    $scope.getComments();
+                    $scope.$apply();
+                }
             }
         });
     }
 
     //get comments for article where articleId === $scope.count
     $scope.getComments = function () {
-        $.ajax({
-            url: '@Url.Action("GetComments","Test")?articleId=' + $scope.count,
-            method: 'GET',
-            success: function (data) {
-                $scope.comments = data
-                $scope.getCommentList();
-                $scope.$apply();
-            }
-        });
-    };
-
-    $scope.getCommentList = function () {
         $.ajax({
             url: '@Url.Action("GetCommentList","Test")?articleId=' + $scope.count,
             method: 'GET',
