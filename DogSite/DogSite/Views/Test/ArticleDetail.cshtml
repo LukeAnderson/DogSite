@@ -1,5 +1,8 @@
 ﻿@model DogSite.Models.ArticleViewModel
 
+<script src="index.js"></script>
+<script src="heroDetail.js"></script>
+
 @section left{
     <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
 }
@@ -7,20 +10,25 @@
 @section middle{
     <container id="currentArticle"><!--PartialView _Article--></container>
 
-    <div ng-app="CommentApp" ng-controller="CommentController">
+    <div ng-app="CommentApp" ng-controller="CommentController as vm">
 
-        <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticle()" />
-        <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticle()" />
-        {{count}}
-
-        <p>@Html.ActionLink("Back to List", "Index")</p>
+        <!--Article Actions: Previous, Next and Back to list-->
+        <div>
+            <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticle()" />
+            <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticle()" />
+            {{count}}
+            <p>@Html.ActionLink("Back to List", "Index")</p>
+        </div>
 
 
         <hr />
+
+
+        <!--label used for debugging-->
         <p class="preline" ng-model="label">{{label}}</p>
 
-        <div class="panel panel-danger" ng-model="errorPanel" ng-show="errorPanelShow">
-       
+        <!--Error Panel-->
+        <div class="panel panel-danger" ng-model="errorPanel" ng-show="toggleErrorPanel">
             <div class="panel-heading clearfix">
                 <h3 class="panel-title pull-left" style="padding:7.5px;"><strong>{{panelTitle}}</strong></h3>
                 <button type="button" class="close" aria-label="Close" ng-click="hideErrorPanel()">
@@ -31,15 +39,24 @@
                 {{panelBody}}
             </div>
         </div>
+
+
         <br />
 
 
+        <!--Post Comment TextArea & Post Button-->
         <div>
             <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
             <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
         </div>
 
+
+        <!--Article Comments-->
         <div id="partialViewComments"></div>
+
+
+
+
 
     </div>
 }
@@ -49,8 +66,6 @@
 }
 
 <script>
-
-
 //call on load
 $(document).ready(function () {
 
@@ -63,17 +78,19 @@ $(document).ready(function () {
     });
 });
 
+
 //Angular commment app
 var app = angular.module('CommentApp', []);
 app.controller('CommentController', function ($scope) {
 
-    //initialize
+
+    //initialize variables
     var postCommentPlaceHolderText = "Comment!";
     $scope.postComment = postCommentPlaceHolderText;
 
-    $scope.count = @Model.Id;
+    $scope.count = @Model.Id;//marks the current article
 
-    var maxCount;
+    var maxCount;//need max number of articles from database
     $.ajax({
         url: '@Url.Action("GetMaxCount","Test")',
         method: 'GET',
@@ -87,6 +104,7 @@ app.controller('CommentController', function ($scope) {
             $scope.postComment = "All clear!"
     }
 
+    //getting articles
     $scope.getArticle = function () {
         $.ajax({
             url: '@Url.Action("GetArticle","Test")?Id=' + $scope.count,
@@ -110,9 +128,14 @@ app.controller('CommentController', function ($scope) {
         $scope.getComments();
     }
 
-    $scope.errorPanelShow= true;
+
+    //Error Panel
     $scope.hideErrorPanel = function () {
-        $scope.errorPanelShow = false;
+        $scope.toggleErrorPanel = false;
+    }
+
+    $scope.showErrorPanel = function () {
+        $scope.toggleErrorPanel = true;
     }
 
 
@@ -125,7 +148,7 @@ app.controller('CommentController', function ($scope) {
             success: function (data) {
                 if (data === "Unauthorized") {
                     $scope.label = "you need to log in";
-                    $scope.errorPanelShow = true;
+                    $scope.showErrorPanel();
                     $scope.panelTitle = "cool";
                     $scope.panelBody = "You need to log in";
                     $scope.$apply();
@@ -158,7 +181,6 @@ app.controller('CommentController', function ($scope) {
             }
         });
     };
-
     $scope.getComments();//call to get comments on initial article
 });
 </script>
