@@ -1,7 +1,10 @@
 ﻿@model DogSite.Models.ArticleViewModel
 
-<script src="index.js"></script>
-<script src="heroDetail.js"></script>
+
+@section scripts{
+
+    <script src="~/Scripts/Test/ArticleDetail/clock.js"></script>
+}
 
 @section left{
     <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
@@ -10,13 +13,14 @@
 @section middle{
     <container id="currentArticle"><!--PartialView _Article--></container>
 
-    <div ng-app="CommentApp" ng-controller="CommentController as vm">
+    <div ng-app="CommentApp" ng-controller="CommentApp as ctrl">
 
-        <!--Article Actions: Previous, Next and Back to list-->
+
+        <!--Article Actions: Previous, Next and Back to list  <article-actions></article-actions>-->
         <div>
             <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticle()" />
             <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticle()" />
-            {{count}}
+            {{ctrl.count}}
             <p>@Html.ActionLink("Back to List", "Index")</p>
         </div>
 
@@ -25,18 +29,18 @@
 
 
         <!--label used for debugging-->
-        <p class="preline" ng-model="label">{{label}}</p>
+        <p class="preline" ng-model="ctrl.label">{{ctrl.label}}</p>
 
         <!--Error Panel-->
-        <div class="panel panel-danger" ng-model="errorPanel" ng-show="toggleErrorPanel">
+        <div class="panel panel-danger" ng-show="ctrl.showErrorPanel">
             <div class="panel-heading clearfix">
-                <h3 class="panel-title pull-left" style="padding:7.5px;"><strong>{{panelTitle}}</strong></h3>
+                <h3 class="panel-title pull-left" style="padding:7.5px;"><strong>{{ctrl.panelTitle}}</strong></h3>
                 <button type="button" class="close" aria-label="Close" ng-click="hideErrorPanel()">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="panel-body">
-                {{panelBody}}
+                {{ctrl.panelBody}}
             </div>
         </div>
 
@@ -46,7 +50,10 @@
 
         <!--Post Comment TextArea & Post Button-->
         <div>
-            <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="postComment" ng-click="clearPlaceHolderText()"></textarea>
+            <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="ctrl.postComment" ng-click="clearPlaceHolderText()"></textarea>
+
+
+
             <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
         </div>
 
@@ -54,60 +61,87 @@
         <!--Article Comments-->
         <div id="partialViewComments"></div>
 
-
-
-
-
     </div>
 }
 
 @section right{
     <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
 }
-
+   
 <script>
-//call on load
-$(document).ready(function () {
+    var ctrl = function ($scope) {
+        var _this = this;
 
-    $.ajax({
-        url: '@Url.Action("GetArticle","Test",new { Id = Model.Id})',
-        method: 'GET',
-        success: function (data) {
-            $("#currentArticle").html(data)
+        //initialize variables
+        var postCommentPlaceHolderText = "Comment!";
+        this.postComment = postCommentPlaceHolderText;
+        this.count = @Model.Id;
+        this.maxCount = 80;
+        this.showErrorPanel = false;
+
+        var maxCount;//need max number of articles from database
+        $.ajax({
+            url: '@Url.Action("GetMaxCount","Test")',
+            method: 'GET',
+            success: function (data) {
+                maxCount = data;
+            }
+        });
+
+        $scope.clearPlaceHolderText = function () {
+            _this.clearPlaceHolderText(_this, postCommentPlaceHolderText);
         }
-    });
-});
 
+        $scope.doStuff = function () {
+            _this.doStuff();
+        };
 
-//Angular commment app
-var app = angular.module('CommentApp', []);
-app.controller('CommentController', function ($scope) {
-
-
-    //initialize variables
-    var postCommentPlaceHolderText = "Comment!";
-    $scope.postComment = postCommentPlaceHolderText;
-
-    $scope.count = @Model.Id;//marks the current article
-
-    var maxCount;//need max number of articles from database
-    $.ajax({
-        url: '@Url.Action("GetMaxCount","Test")',
-        method: 'GET',
-        success: function (data) {
-            maxCount = data;
+        $scope.getArticle = function () {
+            _this.getArticle(_this);
         }
-    });
 
-    $scope.clearPlaceHolderText = function () {
-        if ($scope.postComment === postCommentPlaceHolderText)
-            $scope.postComment = "All clear!"
+        $scope.getNextArticle = function () {
+            _this.getNextArticle(_this);
+        }
+
+        $scope.getPreviousArticle = function () {
+            _this.getPreviousArticle(_this);
+        }
+
+        $scope.hideErrorPanel = function () {;
+            _this.showErrorPanel = false;
+        }
+
+        $scope.addComment = function () {
+            console.log("ctrl calls god");
+            _this.addComment(_this,$scope);
+        }
+
+        $scope.getComments = function () {
+            _this.getComments();
+        }
+
+        this.getArticle(_this);//get the first article
+        this.getComments(_this);//get the comments for the first article
+    };
+
+    ctrl.prototype.hideErrorPanel = function (ctrl) {
+        ctrl.showErrorPanel = false;
+    }
+    ctrl.prototype.showErrorPanel = function (ctrl) {
+        ctrl.showErrorPanel = true;
+    }
+
+    ctrl.prototype.clearPlaceHolderText = function (ctrl, placeHolderText) {
+        if (ctrl.postComment === placeHolderText) {
+            ctrl.postComment = "All clear!";
+        }
     }
 
     //getting articles
-    $scope.getArticle = function () {
+    ctrl.prototype.getArticle = function (ctrl) {
         $.ajax({
-            url: '@Url.Action("GetArticle","Test")?Id=' + $scope.count,
+            url: '@Url.Action("GetArticle","Test")?Id=' + ctrl.count,
             method: 'GET',
             success: function (data) {
                 $("#currentArticle").html(data);
@@ -115,72 +149,58 @@ app.controller('CommentController', function ($scope) {
         });
     }
 
-    //get next/previous articles
-    $scope.getNextArticle = function () {
-        $scope.count = $scope.count >= maxCount ? 1 : ++$scope.count;
-        $scope.getArticle();
-        $scope.getComments();
+    ctrl.prototype.getNextArticle = function (ctrl) {
+        ctrl.count = (ctrl.count) >= (ctrl.maxCount) ? 1 : ++(ctrl.count);
+        ctrl.getArticle(ctrl);
+        ctrl.getComments(ctrl);
     }
 
-    $scope.getPreviousArticle = function () {
-        $scope.count = $scope.count <= 1 ? maxCount : --$scope.count;
-        $scope.getArticle();
-        $scope.getComments();
-    }
-
-
-    //Error Panel
-    $scope.hideErrorPanel = function () {
-        $scope.toggleErrorPanel = false;
-    }
-
-    $scope.showErrorPanel = function () {
-        $scope.toggleErrorPanel = true;
+    ctrl.prototype.getPreviousArticle = function (ctrl) {
+        ctrl.count = ctrl.count <= 1 ? ctrl.maxCount : --ctrl.count;
+        ctrl.getArticle(ctrl);
+        ctrl.getComments(ctrl);
     }
 
 
+    //get comments for article where articleId === $scope.count
+    ctrl.prototype.getComments = function (ctrl) {
+        $.ajax({
+            url: '@Url.Action("GetCommentList","Test")?articleId=' + ctrl.count,
+            method: 'GET',
+            success: function (data) {
+                $("#partialViewComments").html(data);
+            }
+        });
+    };
 
     //add comment to article where articleId === $scope.count
-    $scope.addComment = function () {
+    ctrl.prototype.addComment = function (ctrl,$scope) {
         $.ajax({
-            url: '@Url.Action("AddComment", "Test")?comment=' + escape( $scope.postComment )+ "&articleId=" + $scope.count,
+            url: '@Url.Action("AddComment", "Test")?comment=' + escape(ctrl.postComment) + "&articleId=" + ctrl.count,
             method: 'POST',
             success: function (data) {
                 if (data === "Unauthorized") {
-                    $scope.label = "you need to log in";
-                    $scope.showErrorPanel();
-                    $scope.panelTitle = "cool";
-                    $scope.panelBody = "You need to log in";
-                    $scope.$apply();
+                    ctrl.panelTitle = "Login";
+                    ctrl.panelBody = "You need to be logged in to post comments";
+                    ctrl.showErrorPanel = true;
+                    $scope.$apply();//need the error panel to show this digest cycle
                     return;
                 }
                 else if (data != "OK") {
-                    $scope.label = "unexpected server error contact site admin";
-                    $scope.$apply();
+                    ctrl.label = "unexpected server error contact site admin";
                     console.log("ajax call AddComment,Test in ArticleDetail returned: " + data + " HttpStatusCode");
                     return;
                 }
                 else {//OK
-                    $scope.label = data;//$scope.postComment;
-                    $scope.comments += $scope.postComment + "\n\n\n";
-                    $scope.getComments();
-                    $scope.$apply();
+                    ctrl.label = data;//$scope.postComment;
+                    ctrl.getComments(ctrl);
                 }
             }
         });
     }
 
-    //get comments for article where articleId === $scope.count
-    $scope.getComments = function () {
-        $.ajax({
-            url: '@Url.Action("GetCommentList","Test")?articleId=' + $scope.count,
-            method: 'GET',
-            success: function (data) {
-                $("#partialViewComments").html(data);
-                $scope.$apply();
-            }
-        });
-    };
-    $scope.getComments();//call to get comments on initial article
-});
+    ctrl.$inject = ['$scope'];
+    var app = angular.module('CommentApp', []);
+    app.controller('CommentApp', ctrl);
+
 </script>

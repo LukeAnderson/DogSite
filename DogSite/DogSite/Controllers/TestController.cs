@@ -37,6 +37,7 @@ namespace DogSite.Controllers
         //get a specific article
         public ActionResult ArticleDetail(int articleId = 1)
         {
+            Session["maxCount"] = GetMaxCount();
             return View(articleViewModelList.SingleOrDefault(x => x.Id == articleId));
         }
 
