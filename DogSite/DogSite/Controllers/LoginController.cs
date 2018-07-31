@@ -38,5 +38,40 @@ namespace DogSite.Controllers
 
         }
 
+
+        public ActionResult AddOrEdit(int id = 1)
+        {
+            UserViewModel uvm = new UserViewModel();
+            return View(uvm);
+        }
+
+        [HttpPost]
+        public ActionResult AddOrEdit(UserViewModel uvm)
+        {
+            if(uvm.Username == null || uvm.Password == null)
+            {
+                ViewBag.RegistrationMsg = "Enter in username and password.";
+            }
+            else if(!uvm.Password.Equals(uvm.ConfirmPassword))
+            {
+                ViewBag.RegistrationMsg = "Password and confirm password do not match.";
+            }
+            else
+            {
+                db = new ArticleDatabaseEntities();
+                User newUser = new User { Username = uvm.Username, Password = uvm.Password };
+                db.Users.Add(newUser);
+                db.SaveChanges();
+                ModelState.Clear();
+                ViewBag.RegistrationMsg = "Registration successful!";
+            }
+            
+
+
+            return View("AddOrEdit", new UserViewModel());
+        }
+
+
+
     }
 }

@@ -40,5 +40,18 @@ textarea {
 
 .panel,
 .panel-body {
-    display: inline-block
+    display: inline-block;
+}
+
+.loginTable{
+    border-collapse:collapse;
+}
+
+.loginTableTd {
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.align-right{
+    text-align:right;
 }

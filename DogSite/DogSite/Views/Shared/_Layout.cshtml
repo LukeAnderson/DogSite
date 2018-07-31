@@ -29,7 +29,17 @@
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                     <li>@Html.ActionLink("Articles", "Index", "Test")</li>
-                    <li>@Html.ActionLink("Login", "Index", "Login")</li>
+                    <li>
+                        @if (Session["userId"] == null)
+                        {
+                            @Html.ActionLink("Login", "Index", "Login")
+
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Logout", "Logout", "Login")
+                        }          
+                    </li>
                 </ul>
             </div>
         </div>
@@ -65,18 +75,8 @@
         <footer>
             <div class="container">
                 @RenderSection("footer", false)
-                <p>&copy; 2018 - My ASP.NET Application</p>
+                <p>&copy; 2018 - All About Dogs</p>
             </div>
-
-            @if (Session["userId"] != null)
-            {
-                <a href="@Url.Action("Logout", "Login")">Logout</a>
-            }
-            else
-            {
-                <a href="@Url.Action("Index", "Login")">Login</a>
-            }
-
         </footer>
     </div>
 

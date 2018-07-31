@@ -76,15 +76,15 @@
         var postCommentPlaceHolderText = "Comment!";
         this.postComment = postCommentPlaceHolderText;
         this.count = @Model.Id;
-        this.maxCount = 80;
+
         this.showErrorPanel = false;
 
-        var maxCount;//need max number of articles from database
+        //var maxCount;//need max number of articles from database
         $.ajax({
             url: '@Url.Action("GetMaxCount","Test")',
             method: 'GET',
             success: function (data) {
-                maxCount = data;
+                _this.maxCount = data;
             }
         });
 
@@ -113,7 +113,6 @@
         }
 
         $scope.addComment = function () {
-            console.log("ctrl calls god");
             _this.addComment(_this,$scope);
         }
 
@@ -134,7 +133,7 @@
 
     ctrl.prototype.clearPlaceHolderText = function (ctrl, placeHolderText) {
         if (ctrl.postComment === placeHolderText) {
-            ctrl.postComment = "All clear!";
+            ctrl.postComment = "";
         }
     }
 
@@ -186,8 +185,8 @@
                     $scope.$apply();//need the error panel to show this digest cycle
                     return;
                 }
-                else if (data != "OK") {
-                    ctrl.label = "unexpected server error contact site admin";
+                else if (data != "OK") { 
+                    ctrl.label = "unexpected server error contact site admin with code:" + data;
                     console.log("ajax call AddComment,Test in ArticleDetail returned: " + data + " HttpStatusCode");
                     return;
                 }

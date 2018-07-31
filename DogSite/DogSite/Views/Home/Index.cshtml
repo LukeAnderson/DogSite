@@ -12,8 +12,8 @@
 
     <div class="col-sm-4">
         <h2>Articles</h2>
-        <p>
-            Browse 80 articles about dogs.
+        <p ng-app="getCount" ng-controller="homeIndexCtrl">
+            Browse {{count}} articles about dogs.
         </p>
         <a href="@Url.Action("Index","Test")"><h4>Visit Articles</h4></a>
     </div>
@@ -23,6 +23,19 @@
         <p>
             Register to leave comments on articles.
         </p>
-        <a href="@Url.Action("Index","Login")"><h4>Visit Registration Page</h4></a>
+        <a href="@Url.Action("AddOrEdit","Login")"><h4>Visit Registration Page</h4></a>
     </div>
 </div>
+<script>
+    var app = angular.module('getCount', []);
+    app.controller('homeIndexCtrl', function ($scope) {
+        $.ajax({
+            url: '@Url.Action("GetMaxCount","Test")',
+            method: 'GET',
+            success: function (data) {
+                $scope.count = data;
+                $scope.$apply();
+            }
+        });
+    });
+</script>
