@@ -88,37 +88,14 @@
             }
         });
 
-        $scope.clearPlaceHolderText = function () {
-            _this.clearPlaceHolderText(_this, postCommentPlaceHolderText);
-        }
-
-        $scope.doStuff = function () {
-            _this.doStuff();
-        };
-
-        $scope.getArticle = function () {
-            _this.getArticle(_this);
-        }
-
-        $scope.getNextArticle = function () {
-            _this.getNextArticle(_this);
-        }
-
-        $scope.getPreviousArticle = function () {
-            _this.getPreviousArticle(_this);
-        }
-
-        $scope.hideErrorPanel = function () {;
-            _this.showErrorPanel = false;
-        }
-
-        $scope.addComment = function () {
-            _this.addComment(_this,$scope);
-        }
-
-        $scope.getComments = function () {
-            _this.getComments();
-        }
+        $scope.clearPlaceHolderText = () => this.clearPlaceHolderText(this, postCommentPlaceHolderText);
+        $scope.getArticle = () => this.getArticle(this);
+        $scope.getNextArticle = () => this.getNextArticle(this);
+        $scope.getPreviousArticle = () => this.getPreviousArticle(this);
+        $scope.hideErrorPanel = () => this.showErrorPanel = false;
+        $scope.addComment = () => this.addComment(this, $scope);
+        $scope.getComments = () => this.getComments();
+        
 
         this.getArticle(_this);//get the first article
         this.getComments(_this);//get the comments for the first article
