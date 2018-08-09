@@ -1,0 +1,182 @@
+﻿@model DogSite.Models.ArticleViewModel
+
+
+@section scripts{
+
+    <script src="~/Scripts/Test/ArticleDetail/clock.js"></script>
+}
+
+@section left{
+    <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
+}
+
+@section middle{
+    <container id="currentArticle"><!--PartialView _Article--></container>
+
+    <div ng-app="CommentApp" ng-controller="CommentApp as ctrl">
+
+
+        <!--Article Actions: Previous, Next and Back to list  <article-actions></article-actions>-->
+        <div>
+            <input id="previousArticleButton" class="btn btn-primary" type="button" value="Previous" ng-click="getPreviousArticle()" />
+            <input id="nextArticleButton" class="btn btn-primary" type="button" value="Next" ng-click="getNextArticle()" />
+            {{ctrl.count}}
+            <p>@Html.ActionLink("Back to List", "Index")</p>
+        </div>
+
+
+        <hr />
+
+
+        <!--label used for debugging-->
+        <p class="preline" ng-model="ctrl.label">{{ctrl.label}}</p>
+
+        <!--Error Panel-->
+        <div class="panel panel-danger" ng-show="ctrl.showErrorPanel">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left" style="padding:7.5px;"><strong>{{ctrl.panelTitle}}</strong></h3>
+                <button type="button" class="close" aria-label="Close" ng-click="hideErrorPanel()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="panel-body">
+                {{ctrl.panelBody}}
+            </div>
+        </div>
+
+
+        <br />
+
+
+        <!--Post Comment TextArea & Post Button-->
+        <div>
+            <textarea id="commentBox" rows="4" cols="100" maxlength="256" ng-model="ctrl.postComment" ng-click="clearPlaceHolderText()"></textarea>
+
+
+
+            <input id="postCommentButton" class="btn btn-primary" type="button" value="Post" ng-click="addComment()" />
+        </div>
+
+
+        <!--Article Comments-->
+        <div id="partialViewComments"></div>
+
+    </div>
+}
+
+@section right{
+    <img src="/Content/Images/dogImage1.png" alt="dog picture" class="img-responsive" />
+}
+   
+<script>
+    var ctrl = function ($scope) {
+        var _this = this;
+
+        //initialize variables
+        var postCommentPlaceHolderText = "Comment!";
+        this.postComment = postCommentPlaceHolderText;
+        this.count = @Model.Id;
+
+        this.showErrorPanel = false;
+
+        //var maxCount;//need max number of articles from database
+        $.ajax({
+            url: '@Url.Action("GetMaxCount","Test")',
+            method: 'GET',
+            success: function (data) {
+                _this.maxCount = data;
+            }
+        });
+
+        $scope.clearPlaceHolderText = () => this.clearPlaceHolderText(this, postCommentPlaceHolderText);
+        $scope.getArticle = () => this.getArticle(this);
+        $scope.getNextArticle = () => this.getNextArticle(this);
+        $scope.getPreviousArticle = () => this.getPreviousArticle(this);
+        $scope.hideErrorPanel = () => this.showErrorPanel = false;
+        $scope.addComment = () => this.addComment(this, $scope);
+        $scope.getComments = () => this.getComments();
+        
+
+        this.getArticle(_this);//get the first article
+        this.getComments(_this);//get the comments for the first article
+    };
+
+    ctrl.prototype.hideErrorPanel = function (ctrl) {
+        ctrl.showErrorPanel = false;
+    }
+    ctrl.prototype.showErrorPanel = function (ctrl) {
+        ctrl.showErrorPanel = true;
+    }
+
+    ctrl.prototype.clearPlaceHolderText = function (ctrl, placeHolderText) {
+        if (ctrl.postComment === placeHolderText) {
+            ctrl.postComment = "";
+        }
+    }
+
+    //getting articles
+    ctrl.prototype.getArticle = function (ctrl) {
+        $.ajax({
+            url: '@Url.Action("GetArticle","Test")?Id=' + ctrl.count,
+            method: 'GET',
+            success: function (data) {
+                $("#currentArticle").html(data);
+            }
+        });
+    }
+
+    ctrl.prototype.getNextArticle = function (ctrl) {
+        ctrl.count = (ctrl.count) >= (ctrl.maxCount) ? 1 : ++(ctrl.count);
+        ctrl.getArticle(ctrl);
+        ctrl.getComments(ctrl);
+    }
+
+    ctrl.prototype.getPreviousArticle = function (ctrl) {
+        ctrl.count = ctrl.count <= 1 ? ctrl.maxCount : --ctrl.count;
+        ctrl.getArticle(ctrl);
+        ctrl.getComments(ctrl);
+    }
+
+
+    //get comments for article where articleId === $scope.count
+    ctrl.prototype.getComments = function (ctrl) {
+        $.ajax({
+            url: '@Url.Action("GetCommentList","Test")?articleId=' + ctrl.count,
+            method: 'GET',
+            success: function (data) {
+                $("#partialViewComments").html(data);
+            }
+        });
+    };
+
+    //add comment to article where articleId === $scope.count
+    ctrl.prototype.addComment = function (ctrl,$scope) {
+        $.ajax({
+            url: '@Url.Action("AddComment", "Test")?comment=' + escape(ctrl.postComment) + "&articleId=" + ctrl.count,
+            method: 'POST',
+            success: function (data) {
+                if (data === "Unauthorized") {
+                    ctrl.panelTitle = "Login";
+                    ctrl.panelBody = "You need to be logged in to post comments";
+                    ctrl.showErrorPanel = true;
+                    $scope.$apply();//need the error panel to show this digest cycle
+                    return;
+                }
+                else if (data != "OK") { 
+                    ctrl.label = "unexpected server error contact site admin with code:" + data;
+                    console.log("ajax call AddComment,Test in ArticleDetail returned: " + data + " HttpStatusCode");
+                    return;
+                }
+                else {//OK
+                    ctrl.label = data;//$scope.postComment;
+                    ctrl.getComments(ctrl);
+                }
+            }
+        });
+    }
+
+    ctrl.$inject = ['$scope'];
+    var app = angular.module('CommentApp', []);
+    app.controller('CommentApp', ctrl);
+
+</script>

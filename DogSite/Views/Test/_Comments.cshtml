@@ -1,0 +1,14 @@
+﻿@model List<DogSite.Models.Comment>
+
+@foreach (var item in Model)
+{
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title"><strong>@Html.DisplayFor(modelItem => item.User.Username)</strong></h3>
+    </div>
+    <div class="panel-body">
+        @Html.DisplayFor(modelItem => item.Text)
+    </div>
+</div>
+    <br />
+}
