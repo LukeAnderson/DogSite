@@ -152,7 +152,7 @@
     //add comment to article where articleId === $scope.count
     ctrl.prototype.addComment = function (ctrl,$scope) {
         $.ajax({
-            url: '@Url.Action("AddComment", "Test")?comment=' + escape(ctrl.postComment) + "&articleId=" + ctrl.count,
+            url: '@Url.Action("AddComment", "Test")?comment=' + encodeURIComponent(ctrl.postComment) + "&articleId=" + ctrl.count,
             method: 'POST',
             success: function (data) {
                 if (data === "Unauthorized") {
